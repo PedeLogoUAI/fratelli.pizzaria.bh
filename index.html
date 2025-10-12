@@ -492,7 +492,7 @@
         async function loadProducts() {
             try {
                 console.log('🔍 Iniciando carregamento de produtos...');
-                elements.apiStatus.innerHTML = '<span style="color: #008C45;"><i class="fas fa-sync fa-spin"></i> Conectando com a API...</span>';
+                elements.apiStatus.innerHTML = '<span style="color: #008C45;"><i class="fas fa-sync fa-spin"></i> Conectando com o banco de dados...</span>';
                 
                 const apiUrl = `${CONFIG.API_URL}?action=getProducts`;
                 console.log('📡 URL da API:', apiUrl);
@@ -511,13 +511,13 @@
                     console.log('✅ Formato detectado: {produtos: array}');
                     products = data.produtos;
                     
-                    console.log(`🎉 ${products.length} produtos carregados da planilha!`);
-                    elements.apiStatus.innerHTML = `<span style="color: #008C45;"><i class="fas fa-check"></i> ${products.length} produtos carregados da planilha</span>`;
+                    console.log(`🎉 ${products.length} produtos carregados!`);
+                    elements.apiStatus.innerHTML = `<span style="color: #008C45;"><i class="fas fa-check"></i> ${products.length} produtos carregados.</span>`;
                     
                     hideDemoMode();
                     renderCategories();
                     renderProducts();
-                    showNotification(`✅ ${products.length} produtos carregados da planilha!`, 'success');
+                    showNotification(`✅ ${products.length} produtos carregados no cardápio!`, 'success');
                     
                 } else {
                     throw new Error('Formato de resposta não reconhecido - esperado: {"produtos": [...]}');
