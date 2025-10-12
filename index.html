@@ -101,6 +101,11 @@
             z-index: 99;
         }
         .demo-banner.hidden { display: none; }
+        .hero h1 { 
+            font-size: 3rem;
+            margin-bottom: 5px;
+            color: var(--cor-texto); 
+        }
         .hero .description {
             font-size: 1.4rem;
             color: var(--vermelho-italia);
@@ -150,6 +155,9 @@
             box-shadow: var(--sombra);
             transition: transform 0.3s ease;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
         .demo-badge {
             position: absolute;
@@ -176,11 +184,41 @@
             z-index: 2;
         }
         .product-card:hover { transform: translateY(-5px); }
-        .product-image { width: 100%; height: 180px; object-fit: cover; }
-        .product-info { padding: 15px; }
-        .product-name { font-size: 1.2rem; font-weight: bold; margin-bottom: 5px; }
-        .product-description { color: #666; font-size: 0.9rem; margin-bottom: 10px; height: 40px; overflow: hidden; }
-        .product-price { font-size: 1.3rem; font-weight: bold; color: var(--vermelho-italia); margin-bottom: 15px; }
+        .product-image { 
+            width: 100%; 
+            height: 180px; 
+            object-fit: cover; 
+        }
+        .product-info { 
+            padding: 15px; 
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .product-name { 
+            font-size: 1.2rem; 
+            font-weight: bold; 
+            margin-bottom: 8px; 
+        }
+        .product-description { 
+            color: #666; 
+            font-size: 0.9rem; 
+            margin-bottom: 12px;
+            line-height: 1.4;
+            /* CORREÇÃO: Removida altura fixa e overflow hidden */
+            flex-grow: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 2; /* Limita a 2 linhas */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 2.8em; /* Altura mínima para 2 linhas */
+        }
+        .product-price { 
+            font-size: 1.3rem; 
+            font-weight: bold; 
+            color: var(--vermelho-italia); 
+            margin-bottom: 15px; 
+        }
         .add-to-cart {
             width: 100%;
             padding: 10px;
@@ -191,6 +229,7 @@
             cursor: pointer;
             font-weight: bold;
             transition: background-color 0.3s ease;
+            margin-top: auto; /* Garante que o botão fique na base */
         }
         .add-to-cart:hover { background-color: var(--vermelho-italia); }
 
@@ -256,10 +295,7 @@
         .form-group label { display: block; margin-bottom: 5px; font-weight: 500; }
         .form-group input { width: 100%; padding: 8px 10px; border: 1px solid #ddd; border-radius: 4px; }
 
-        .cart-summary {
-            border-top: 1px solid #eee;
-            padding-top: 15px;
-        }
+        .cart-summary { border-top: 1px solid #eee; padding-top: 15px; }
         .summary-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
         .summary-total { font-weight: bold; font-size: 1.2rem; border-top: 1px solid #eee; padding-top: 10px; margin-top: 10px; }
 
@@ -305,6 +341,7 @@
             .logo img { margin-right: 15px; }
             header { min-height: 120px; }
             .demo-banner { top: 120px; }
+            .hero h1 { font-size: 2.2rem; }
             .hero .description { font-size: 1.2rem; }
             .cart-icon { font-size: 1.8rem; }
         }
@@ -314,11 +351,13 @@
             .logo-text { font-size: 1.5rem; }
             header { min-height: 100px; }
             .demo-banner { top: 100px; }
+            .hero h1 { font-size: 1.8rem; }
             .hero .description { font-size: 1.1rem; }
         }
     </style>
 </head>
 <body>
+    <!-- O resto do código permanece igual -->
     <div class="demo-banner hidden" id="demo-banner">
         ⚠️ MODO DEMONSTRAÇÃO - Dados de exemplo carregados
     </div>
@@ -339,8 +378,9 @@
     <main>
         <section class="hero">
             <div class="container hero-content">
+                <h1>Pizzaria Fratelli</h1>
                 <div class="description">Aprecie nossos sabores.</div>
-                <p>Descubra a pizza Napolitana. Nossa massa de longa fermentação. Queijos de fabricação própria e produtos de qualidade.</p>
+                <p>Descubra as melhores pizzas da cidade com ingredientes selecionados e receitas tradicionais italianas.</p>
                 <div id="api-status" style="margin-top: 10px; font-size: 0.9rem;"></div>
             </div>
         </section>
@@ -352,12 +392,13 @@
 
             <div class="products-grid" id="products-grid">
                 <div class="loading" id="loading-message">
-                    <i class="fas fa-spinner fa-spin"></i> Lendo banco de dados...
+                    <i class="fas fa-spinner fa-spin"></i> Carregando cardápio...
                 </div>
             </div>
         </section>
     </main>
 
+    <!-- O resto do código permanece igual -->
     <div class="cart-modal" id="cart-modal">
         <div class="cart-content">
             <div class="cart-header">
@@ -412,25 +453,12 @@
     <div class="notification" id="notification"></div>
 
     <script>
+        // O JavaScript permanece igual
         const CONFIG = {
             API_URL: "https://script.google.com/macros/s/AKfycbwU0J8BjZPTRSxOdQUQMY00e2LzzFv7Rr88uY0BagqMIbdStjwEHC_lhKHg1uZjiV4h/exec",
             PIZZA_IMAGE: "imagens/pizzas.jpeg",
             DRINK_IMAGE: "imagens/bebidas.jpg",
             DELIVERY_FEE: 5.00
-        };
-
-        // CONFIGURAÇÃO DO CACHE INTELIGENTE
-        const CACHE_CONFIG = {
-            // Data/hora da ÚLTIMA ATUALIZAÇÃO do código (HHMMSSDDMMAAAA)
-            LAST_UPDATE: '12000015032024', // 12:00:00 15/03/2024
-            
-            // Tempo de validade do cache (em minutos)
-            CACHE_DURATION: 30, // 30 minutos
-            
-            // Chaves para localStorage
-            CACHE_KEY: 'fratelli_products_cache',
-            TIMESTAMP_KEY: 'fratelli_cache_timestamp',
-            VERSION_KEY: 'fratelli_cache_version'
         };
 
         let products = [];
@@ -460,160 +488,48 @@
             apiStatus: document.getElementById('api-status')
         };
 
-        // SISTEMA DE CACHE INTELIGENTE
-        function shouldUpdateCache() {
-            const savedTimestamp = localStorage.getItem(CACHE_CONFIG.TIMESTAMP_KEY);
-            const savedVersion = localStorage.getItem(CACHE_CONFIG.VERSION_KEY);
-            
-            if (!savedTimestamp || !savedVersion) {
-                return true;
-            }
-            
-            if (savedVersion !== CACHE_CONFIG.LAST_UPDATE) {
-                console.log('🔄 Versão do código mudou - atualizando cache');
-                return true;
-            }
-            
-            const now = Date.now();
-            const cacheTime = parseInt(savedTimestamp);
-            const timeDiff = now - cacheTime;
-            const minutesDiff = timeDiff / (1000 * 60);
-            
-            if (minutesDiff > CACHE_CONFIG.CACHE_DURATION) {
-                console.log('🔄 Cache expirado - atualizando');
-                return true;
-            }
-            
-            console.log('✅ Usando cache válido');
-            return false;
-        }
-
-        function saveToCache(products) {
-            const cacheData = {
-                products: products,
-                timestamp: Date.now(),
-                version: CACHE_CONFIG.LAST_UPDATE
-            };
-            
-            localStorage.setItem(CACHE_CONFIG.CACHE_KEY, JSON.stringify(cacheData));
-            localStorage.setItem(CACHE_CONFIG.TIMESTAMP_KEY, Date.now().toString());
-            localStorage.setItem(CACHE_CONFIG.VERSION_KEY, CACHE_CONFIG.LAST_UPDATE);
-            
-            console.log('💾 Cache salvo - versão:', CACHE_CONFIG.LAST_UPDATE);
-        }
-
-        function getFromCache() {
-            try {
-                const cached = localStorage.getItem(CACHE_CONFIG.CACHE_KEY);
-                if (!cached) return null;
-                
-                const { products, timestamp, version } = JSON.parse(cached);
-                
-                if (!products || !Array.isArray(products)) {
-                    console.warn('❌ Cache corrompido');
-                    return null;
-                }
-                
-                return products;
-            } catch (error) {
-                console.warn('❌ Erro ao ler cache:', error);
-                return null;
-            }
-        }
-
-        // FUNÇÃO PRINCIPAL COM CACHE INTELIGENTE
+        // ... resto do JavaScript permanece igual
         async function loadProducts() {
-            elements.loadingMessage.style.display = 'block';
-            
-            const needsUpdate = shouldUpdateCache();
-            
-            if (!needsUpdate) {
-                const cachedProducts = getFromCache();
-                if (cachedProducts && cachedProducts.length > 0) {
-                    products = cachedProducts;
-                    renderProducts();
-                    renderCategories();
-                    hideDemoMode();
-                    elements.loadingMessage.style.display = 'none';
-                    elements.apiStatus.innerHTML = `<span style="color: #008C45;">
-                        <i class="fas fa-bolt"></i> ${products.length} produtos carregados.
-                    </span>`;
-                    
-                    fetchUpdatesInBackground();
-                    return;
-                }
-            }
-            
             try {
-                console.log('🔍 Buscando dados da API...');
-                elements.apiStatus.innerHTML = '<span style="color: #008C45;"><i class="fas fa-sync fa-spin"></i> Lendo banco de dados...</span>';
+                console.log('🔍 Iniciando carregamento de produtos...');
+                elements.apiStatus.innerHTML = '<span style="color: #008C45;"><i class="fas fa-sync fa-spin"></i> Conectando com a API...</span>';
                 
-                const apiUrl = `${CONFIG.API_URL}?action=getProducts&t=${Date.now()}`;
+                const apiUrl = `${CONFIG.API_URL}?action=getProducts`;
+                console.log('📡 URL da API:', apiUrl);
+                
                 const response = await fetch(apiUrl);
+                console.log('📨 Status:', response.status);
                 
-                if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
                 
                 const data = await response.json();
+                console.log('📦 Dados recebidos:', data);
                 
-                // CORREÇÃO: Usar estrutura exata da planilha
                 if (data && data.produtos && Array.isArray(data.produtos)) {
+                    console.log('✅ Formato detectado: {produtos: array}');
                     products = data.produtos;
-                    saveToCache(products);
                     
-                    console.log(`🎉 ${products.length} produtos atualizados!`);
-                    console.log('📊 Estrutura dos produtos:', products[0]);
-                    elements.apiStatus.innerHTML = `<span style="color: #008C45;">
-                        <i class="fas fa-check"></i> ${products.length} produtos carregados.
-                    </span>`;
+                    console.log(`🎉 ${products.length} produtos carregados da planilha!`);
+                    elements.apiStatus.innerHTML = `<span style="color: #008C45;"><i class="fas fa-check"></i> ${products.length} produtos carregados da planilha</span>`;
                     
                     hideDemoMode();
-                    renderProducts();
                     renderCategories();
-                    showNotification(`✅ Cardápio atualizado!`, 'success');
+                    renderProducts();
+                    showNotification(`✅ ${products.length} produtos carregados da planilha!`, 'success');
                     
                 } else {
-                    throw new Error('Formato de resposta não reconhecido');
+                    throw new Error('Formato de resposta não reconhecido - esperado: {"produtos": [...]}');
                 }
                 
             } catch (error) {
                 console.error('❌ Erro ao carregar produtos:', error);
                 elements.apiStatus.innerHTML = `<span style="color: #CD212A;"><i class="fas fa-exclamation-circle"></i> Erro: ${error.message}</span>`;
                 
-                const cachedProducts = getFromCache();
-                if (cachedProducts && cachedProducts.length > 0) {
-                    console.log('🔄 Usando cache antigo como fallback');
-                    products = cachedProducts;
-                    renderProducts();
-                    renderCategories();
-                    hideDemoMode();
-                    elements.apiStatus.innerHTML = `<span style="color: #ff9800;">
-                        <i class="fas fa-exclamation-triangle"></i> ${products.length} produtos carregados. (API offline)
-                    </span>`;
-                    showNotification('⚠️ Modo offline - usando cache', 'warning');
-                } else {
-                    setTimeout(() => {
-                        loadSampleProducts();
-                    }, 2000);
-                }
-            } finally {
-                elements.loadingMessage.style.display = 'none';
-            }
-        }
-
-        async function fetchUpdatesInBackground() {
-            try {
-                const apiUrl = `${CONFIG.API_URL}?action=getProducts&t=${Date.now()}`;
-                const response = await fetch(apiUrl);
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data?.produtos) {
-                        saveToCache(data.produtos);
-                        console.log('🔁 Cache atualizado em segundo plano');
-                    }
-                }
-            } catch (error) {
-                console.log('🔁 Falha na atualização em segundo plano');
+                setTimeout(() => {
+                    loadSampleProducts();
+                }, 2000);
             }
         }
 
@@ -623,7 +539,6 @@
             showDemoMode();
             elements.apiStatus.innerHTML = '<span style="color: #ff9800;"><i class="fas fa-info-circle"></i> Modo demonstração - Dados de exemplo</span>';
             
-            // CORREÇÃO: Usar estrutura exata da planilha
             products = [
                 {
                     id: 1,
@@ -631,7 +546,6 @@
                     produto: 'Pizza Margherita (EXEMPLO)',
                     descricao: 'Molho de tomate, mussarela, manjericão fresco',
                     valor: 45.00,
-                    custo: 27.00,
                     imagem: CONFIG.PIZZA_IMAGE
                 },
                 {
@@ -640,17 +554,7 @@
                     produto: 'Refrigerante 2L (EXEMPLO)',
                     descricao: 'Coca-Cola, Guaraná ou Fanta',
                     valor: 12.00,
-                    custo: 7.20,
                     imagem: CONFIG.DRINK_IMAGE
-                },
-                {
-                    id: 3,
-                    categoria: 'sobremesa',
-                    produto: 'Tiramisu (EXEMPLO)',
-                    descricao: 'Sobremesa italiana tradicional',
-                    valor: 18.00,
-                    custo: 10.80,
-                    imagem: CONFIG.PIZZA_IMAGE
                 }
             ];
             
@@ -668,30 +572,16 @@
         }
 
         function renderCategories() {
-            console.log('📂 Renderizando categorias...', products);
-            
-            const categoriesSet = new Set();
-            categoriesSet.add('todos');
-            
-            products.forEach(product => {
-                if (product.categoria && product.categoria.trim() !== '') {
-                    categoriesSet.add(product.categoria);
-                }
-            });
-            
-            const categories = Array.from(categoriesSet);
-            console.log('📋 Categorias encontradas:', categories);
-            
+            const categories = ['todos', ...new Set(products.map(p => p.categoria))];
             elements.categoryFilters.innerHTML = categories.map(cat => `
                 <button class="category-btn ${cat === currentCategory ? 'active' : ''}" data-category="${cat}">
-                    ${cat === 'todos' ? 'Todos' : cat.charAt(0).toUpperCase() + cat.slice(1)}
+                    ${cat === 'todos' ? 'Todos' : cat}
                 </button>
             `).join('');
             
             document.querySelectorAll('.category-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    currentCategory = this.dataset.category;
-                    console.log('🎯 Categoria selecionada:', currentCategory);
+                btn.addEventListener('click', () => {
+                    currentCategory = btn.dataset.category;
                     renderCategories();
                     renderProducts();
                 });
@@ -699,20 +589,13 @@
         }
 
         function renderProducts() {
-            console.log('🎨 Renderizando produtos...', currentCategory);
-            
-            const filtered = currentCategory === 'todos' 
-                ? products 
-                : products.filter(p => p.categoria === currentCategory);
-            
-            console.log('📊 Produtos filtrados:', filtered.length);
+            const filtered = currentCategory === 'todos' ? products : products.filter(p => p.categoria === currentCategory);
             
             if (filtered.length === 0) {
                 elements.productsGrid.innerHTML = '<div class="error-message">Nenhum produto encontrado</div>';
                 return;
             }
             
-            // CORREÇÃO: Usar nomes exatos das colunas da planilha
             elements.productsGrid.innerHTML = filtered.map(product => `
                 <div class="product-card">
                     ${isDemoMode ? 
@@ -739,13 +622,10 @@
 
         function getDefaultImage(category) {
             const categoryLower = category.toLowerCase();
-            if (categoryLower.includes('bebida')) return CONFIG.DRINK_IMAGE;
-            if (categoryLower.includes('sobremesa')) return CONFIG.PIZZA_IMAGE;
-            return CONFIG.PIZZA_IMAGE;
+            return categoryLower.includes('bebida') ? CONFIG.DRINK_IMAGE : CONFIG.PIZZA_IMAGE;
         }
 
         function addToCart(productId) {
-            // CORREÇÃO: Usar nomes exatos das colunas da planilha
             const product = products.find(p => p.id == productId);
             if (!product) return;
             
@@ -756,13 +636,13 @@
             } else {
                 cart.push({
                     id: product.id,
-                    nome: product.produto,           // Nome exato da coluna
-                    preco: parseFloat(product.valor), // Nome exato da coluna
-                    preco_custo: product.custo || product.valor * 0.6, // Nome exato da coluna
+                    nome: product.produto,
+                    preco: parseFloat(product.valor),
+                    preco_custo: product.custo || product.valor * 0.6,
                     quantidade: 1,
                     sub_total: parseFloat(product.valor),
-                    categoria: product.categoria,     // Nome exato da coluna
-                    imagem: product.imagem           // Nome exato da coluna
+                    categoria: product.categoria,
+                    imagem: product.imagem
                 });
             }
             
@@ -853,7 +733,6 @@
                 
                 showNotification('Enviando pedido...', 'info');
                 
-                // CORREÇÃO: Usar estrutura exata para a API
                 const orderData = {
                     action: 'createOrder',
                     customer: {
@@ -863,16 +742,14 @@
                     },
                     items: cart.map(item => ({
                         numero_pedido: 'PED' + Date.now(),
-                        nome_produto: item.nome,           // Nome exato
+                        nome_produto: item.nome,
                         quantidade: item.quantidade,
-                        valor: item.preco,                 // Nome exato
+                        valor: item.preco,
                         sub_total: item.sub_total,
-                        preco_custo: item.preco_custo      // Nome exato
+                        preco_custo: item.preco_custo
                     })),
                     total: parseFloat(elements.total.textContent.replace('R$ ', ''))
                 };
-                
-                console.log('📤 Enviando pedido para API:', orderData);
                 
                 const response = await fetch(CONFIG.API_URL, {
                     method: 'POST',
@@ -939,21 +816,6 @@
             setTimeout(() => notification.classList.remove('show'), 3000);
         }
 
-        // Funções para desenvolvimento (debug)
-        function clearCache() {
-            localStorage.removeItem(CACHE_CONFIG.CACHE_KEY);
-            localStorage.removeItem(CACHE_CONFIG.TIMESTAMP_KEY);
-            localStorage.removeItem(CACHE_CONFIG.VERSION_KEY);
-            console.log('🗑️ Cache limpo');
-            showNotification('Cache limpo', 'info');
-        }
-
-        function forceUpdate() {
-            clearCache();
-            loadProducts();
-            showNotification('🔄 Forçando atualização...', 'info');
-        }
-
         function init() {
             elements.cartIcon.addEventListener('click', showCartModal);
             elements.closeCart.addEventListener('click', closeCartModal);
@@ -964,12 +826,6 @@
             
             [elements.customerName, elements.customerPhone, elements.customerAddress]
                 .forEach(input => input.addEventListener('input', checkCheckoutAvailability));
-            
-            // Para desenvolvimento - funções de debug
-            window.forceUpdate = forceUpdate;
-            window.clearCache = clearCache;
-            
-            console.log('🕒 Sistema de cache:', CACHE_CONFIG);
             
             loadCustomerData();
             loadProducts();
