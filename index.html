@@ -529,6 +529,7 @@
                 if (cachedProducts && cachedProducts.length > 0) {
                     products = cachedProducts;
                     renderProducts();
+                    renderCategories(); // ⬅️ CORREÇÃO: Chamar renderCategories aqui também
                     hideDemoMode();
                     elements.loadingMessage.style.display = 'none';
                     elements.apiStatus.innerHTML = `<span style="color: #008C45;">
@@ -562,6 +563,7 @@
                     
                     hideDemoMode();
                     renderProducts();
+                    renderCategories(); // ⬅️ CORREÇÃO: Chamar renderCategories aqui
                     showNotification(`✅ Cardápio atualizado!`, 'success');
                     
                 } else {
@@ -577,6 +579,7 @@
                     console.log('🔄 Usando cache antigo como fallback');
                     products = cachedProducts;
                     renderProducts();
+                    renderCategories(); // ⬅️ CORREÇÃO: Chamar renderCategories aqui
                     hideDemoMode();
                     elements.apiStatus.innerHTML = `<span style="color: #ff9800;">
                         <i class="fas fa-exclamation-triangle"></i> ${products.length} produtos carregados. (API offline)
@@ -656,24 +659,35 @@
         }
 
         function renderCategories() {
-            // CORREÇÃO: Garantir que as categorias sejam renderizadas corretamente
-            const categories = ['todos'];
+            console.log('📂 Renderizando categorias...', products);
+            
+            // CORREÇÃO: Usar Set para categorias únicas
+            const categoriesSet = new Set();
+            categoriesSet.add('todos'); // Sempre incluir "todos"
+            
+            // Coletar categorias dos produtos
             products.forEach(product => {
-                if (product.categoria && !categories.includes(product.categoria)) {
-                    categories.push(product.categoria);
+                if (product.categoria && product.categoria.trim() !== '') {
+                    categoriesSet.add(product.categoria);
                 }
             });
             
+            // Converter Set para Array
+            const categories = Array.from(categoriesSet);
+            console.log('📋 Categorias encontradas:', categories);
+            
+            // Renderizar botões de categoria
             elements.categoryFilters.innerHTML = categories.map(cat => `
                 <button class="category-btn ${cat === currentCategory ? 'active' : ''}" data-category="${cat}">
                     ${cat === 'todos' ? 'Todos' : cat.charAt(0).toUpperCase() + cat.slice(1)}
                 </button>
             `).join('');
             
-            // Re-aplicar os event listeners
+            // Re-aplicar os event listeners CORRETAMENTE
             document.querySelectorAll('.category-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    currentCategory = btn.dataset.category;
+                btn.addEventListener('click', function() {
+                    currentCategory = this.dataset.category;
+                    console.log('🎯 Categoria selecionada:', currentCategory);
                     renderCategories(); // Re-renderiza os botões com classe active
                     renderProducts();   // Filtra os produtos
                 });
@@ -681,9 +695,13 @@
         }
 
         function renderProducts() {
+            console.log('🎨 Renderizando produtos...', currentCategory);
+            
             const filtered = currentCategory === 'todos' 
                 ? products 
                 : products.filter(p => p.categoria === currentCategory);
+            
+            console.log('📊 Produtos filtrados:', filtered.length);
             
             if (filtered.length === 0) {
                 elements.productsGrid.innerHTML = '<div class="error-message">Nenhum produto encontrado</div>';
