@@ -22,12 +22,12 @@
         
         header {
             background: linear-gradient(135deg, var(--verde-italia), var(--branco-italia), var(--vermelho-italia));
-            padding: 10px 0; /* Aumentado para header maior */
+            padding: 10px 0;
             box-shadow: var(--sombra);
             position: sticky;
             top: 0;
             z-index: 100;
-            min-height: 160px; /* Dobro da altura anterior (80px -> 160px) */
+            min-height: 160px;
             display: flex;
             align-items: center;
         }
@@ -41,20 +41,20 @@
             display: flex; 
             align-items: center; 
             text-decoration: none; 
-            height: 140px; /* Dobro da altura anterior (70px -> 140px) */
+            height: 140px;
         }
         .logo img { 
-            height: 100%; /* Ocupa 100% da altura do container .logo */
-            margin-right: 20px; /* Aumentado proporcionalmente */
-            border-radius: 50%; /* Círculo branco como fundo */
-            background-color: white; /* Fundo branco para o círculo */
-            padding: 6px; /* Aumentado proporcionalmente */
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); /* Sombra mais pronunciada */
-            object-fit: contain; /* Garante que a imagem se ajuste ao círculo */
+            height: 100%;
+            margin-right: 20px;
+            border-radius: 50%;
+            background-color: white;
+            padding: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            object-fit: contain;
         }
         .logo-text { 
             color: white; 
-            font-size: 2.5rem; /* Aumentado proporcionalmente */
+            font-size: 2.5rem;
             font-weight: bold; 
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3); 
         }
@@ -62,21 +62,21 @@
             position: relative; 
             cursor: pointer; 
             color: white; 
-            font-size: 2.2rem; /* Aumentado proporcionalmente */
+            font-size: 2.2rem;
         }
         .cart-count {
             position: absolute;
-            top: -10px; /* Ajustado proporcionalmente */
-            right: -10px; /* Ajustado proporcionalmente */
+            top: -10px;
+            right: -10px;
             background-color: var(--vermelho-italia);
             color: white;
             border-radius: 50%;
-            width: 28px; /* Aumentado proporcionalmente */
-            height: 28px; /* Aumentado proporcionalmente */
+            width: 28px;
+            height: 28px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 1rem; /* Aumentado proporcionalmente */
+            font-size: 1rem;
             font-weight: bold;
         }
 
@@ -97,18 +97,13 @@
             text-align: center;
             font-weight: bold;
             position: sticky;
-            top: 160px; /* Ajustado para a nova altura do header */
+            top: 160px;
             z-index: 99;
         }
         .demo-banner.hidden { display: none; }
-        .hero h1 { 
-            font-size: 3rem; /* Aumentado para combinar com header maior */
-            margin-bottom: 5px; /* Reduzido para aproximar da descrição */
-            color: var(--cor-texto); 
-        }
         .hero .description {
-            font-size: 1.4rem; /* Aumentado e destacado */
-            color: var(--vermelho-italia); /* Cor destacada */
+            font-size: 1.4rem;
+            color: var(--vermelho-italia);
             font-weight: 500;
             margin-bottom: 15px;
             font-style: italic;
@@ -302,22 +297,20 @@
         @media (max-width: 768px) {
             .products-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
             .cart-content { width: 95%; }
-            .logo { height: 100px; } /* Ajuste proporcional para mobile */
-            .logo-text { font-size: 1.8rem; } /* Ajuste proporcional para mobile */
+            .logo { height: 100px; }
+            .logo-text { font-size: 1.8rem; }
             .logo img { margin-right: 15px; }
-            header { min-height: 120px; } /* Ajuste proporcional para mobile */
-            .demo-banner { top: 120px; } /* Ajuste proporcional para mobile */
-            .hero h1 { font-size: 2.2rem; }
+            header { min-height: 120px; }
+            .demo-banner { top: 120px; }
             .hero .description { font-size: 1.2rem; }
             .cart-icon { font-size: 1.8rem; }
         }
 
         @media (max-width: 480px) {
-            .logo { height: 80px; } /* Ajuste proporcional para mobile pequeno */
-            .logo-text { font-size: 1.5rem; } /* Ajuste proporcional para mobile pequeno */
-            header { min-height: 100px; } /* Ajuste proporcional para mobile pequeno */
-            .demo-banner { top: 100px; } /* Ajuste proporcional para mobile pequeno */
-            .hero h1 { font-size: 1.8rem; }
+            .logo { height: 80px; }
+            .logo-text { font-size: 1.5rem; }
+            header { min-height: 100px; }
+            .demo-banner { top: 100px; }
             .hero .description { font-size: 1.1rem; }
         }
     </style>
@@ -343,9 +336,9 @@
     <main>
         <section class="hero">
             <div class="container hero-content">
-                <h1>Pizzaria Fratelli</h1>
+                <!-- REMOVIDO: <h1>Pizzaria Fratelli</h1> -->
                 <div class="description">Aprecie nossos sabores.</div>
-                <p>Descubra as melhores pizzas da cidade com ingredientes selecionados e receitas tradicionais italianas.</p>
+                <p>Descubra a pizza Napolitana. Nossa massa de longa fermentação. Queijos de fabricação própria e produtos de qualidade.</p>
                 <div id="api-status" style="margin-top: 10px; font-size: 0.9rem;"></div>
             </div>
         </section>
@@ -424,6 +417,20 @@
             DELIVERY_FEE: 5.00
         };
 
+        // CONFIGURAÇÃO DO CACHE INTELIGENTE
+        const CACHE_CONFIG = {
+            // Data/hora da ÚLTIMA ATUALIZAÇÃO do código (HHMMSSDDMMAAAA)
+            LAST_UPDATE: '12000015032024', // 12:00:00 15/03/2024
+            
+            // Tempo de validade do cache (em minutos)
+            CACHE_DURATION: 30, // 30 minutos
+            
+            // Chaves para localStorage
+            CACHE_KEY: 'fratelli_products_cache',
+            TIMESTAMP_KEY: 'fratelli_cache_timestamp',
+            VERSION_KEY: 'fratelli_cache_version'
+        };
+
         let products = [];
         let cart = [];
         let currentCategory = 'todos';
@@ -451,49 +458,155 @@
             apiStatus: document.getElementById('api-status')
         };
 
-        // FUNÇÃO PRINCIPAL CORRIGIDA - FORMATO ESPECÍFICO
-        async function loadProducts() {
+        // SISTEMA DE CACHE INTELIGENTE
+        function shouldUpdateCache() {
+            const savedTimestamp = localStorage.getItem(CACHE_CONFIG.TIMESTAMP_KEY);
+            const savedVersion = localStorage.getItem(CACHE_CONFIG.VERSION_KEY);
+            
+            if (!savedTimestamp || !savedVersion) {
+                return true;
+            }
+            
+            if (savedVersion !== CACHE_CONFIG.LAST_UPDATE) {
+                console.log('🔄 Versão do código mudou - atualizando cache');
+                return true;
+            }
+            
+            const now = Date.now();
+            const cacheTime = parseInt(savedTimestamp);
+            const timeDiff = now - cacheTime;
+            const minutesDiff = timeDiff / (1000 * 60);
+            
+            if (minutesDiff > CACHE_CONFIG.CACHE_DURATION) {
+                console.log('🔄 Cache expirado - atualizando');
+                return true;
+            }
+            
+            console.log('✅ Usando cache válido');
+            return false;
+        }
+
+        function saveToCache(products) {
+            const cacheData = {
+                products: products,
+                timestamp: Date.now(),
+                version: CACHE_CONFIG.LAST_UPDATE
+            };
+            
+            localStorage.setItem(CACHE_CONFIG.CACHE_KEY, JSON.stringify(cacheData));
+            localStorage.setItem(CACHE_CONFIG.TIMESTAMP_KEY, Date.now().toString());
+            localStorage.setItem(CACHE_CONFIG.VERSION_KEY, CACHE_CONFIG.LAST_UPDATE);
+            
+            console.log('💾 Cache salvo - versão:', CACHE_CONFIG.LAST_UPDATE);
+        }
+
+        function getFromCache() {
             try {
-                console.log('🔍 Iniciando carregamento de produtos...');
-                elements.apiStatus.innerHTML = '<span style="color: #008C45;"><i class="fas fa-sync fa-spin"></i> Conectando com a API...</span>';
+                const cached = localStorage.getItem(CACHE_CONFIG.CACHE_KEY);
+                if (!cached) return null;
                 
-                const apiUrl = `${CONFIG.API_URL}?action=getProducts`;
-                console.log('📡 URL da API:', apiUrl);
+                const { products, timestamp, version } = JSON.parse(cached);
                 
-                const response = await fetch(apiUrl);
-                console.log('📨 Status:', response.status);
-                
-                if (!response.ok) {
-                    throw new Error(`Erro HTTP: ${response.status}`);
+                if (!products || !Array.isArray(products)) {
+                    console.warn('❌ Cache corrompido');
+                    return null;
                 }
                 
-                const data = await response.json();
-                console.log('📦 Dados recebidos:', data);
-                
-                // FORMATO ESPECÍFICO: {"produtos": [...]}
-                if (data && data.produtos && Array.isArray(data.produtos)) {
-                    console.log('✅ Formato detectado: {produtos: array}');
-                    products = data.produtos;
+                return products;
+            } catch (error) {
+                console.warn('❌ Erro ao ler cache:', error);
+                return null;
+            }
+        }
+
+        // FUNÇÃO PRINCIPAL COM CACHE INTELIGENTE
+        async function loadProducts() {
+            elements.loadingMessage.style.display = 'block';
+            
+            const needsUpdate = shouldUpdateCache();
+            
+            if (!needsUpdate) {
+                const cachedProducts = getFromCache();
+                if (cachedProducts && cachedProducts.length > 0) {
+                    products = cachedProducts;
+                    renderProducts();
+                    hideDemoMode();
+                    elements.loadingMessage.style.display = 'none';
+                    elements.apiStatus.innerHTML = `<span style="color: #008C45;">
+                        <i class="fas fa-bolt"></i> ${products.length} produtos carregados.
+                    </span>`;
                     
-                    console.log(`🎉 ${products.length} produtos carregados da planilha!`);
-                    elements.apiStatus.innerHTML = `<span style="color: #008C45;"><i class="fas fa-check"></i> ${products.length} produtos carregados da planilha</span>`;
+                    fetchUpdatesInBackground();
+                    return;
+                }
+            }
+            
+            try {
+                console.log('🔍 Buscando dados da API...');
+                elements.apiStatus.innerHTML = '<span style="color: #008C45;"><i class="fas fa-sync fa-spin"></i> Atualizando...</span>';
+                
+                const apiUrl = `${CONFIG.API_URL}?action=getProducts&t=${Date.now()}`;
+                const response = await fetch(apiUrl);
+                
+                if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
+                
+                const data = await response.json();
+                
+                if (data && data.produtos && Array.isArray(data.produtos)) {
+                    products = data.produtos;
+                    saveToCache(products);
+                    
+                    console.log(`🎉 ${products.length} produtos atualizados!`);
+                    elements.apiStatus.innerHTML = `<span style="color: #008C45;">
+                        <i class="fas fa-check"></i> ${products.length} produtos carregados.
+                    </span>`;
                     
                     hideDemoMode();
-                    renderCategories();
                     renderProducts();
-                    showNotification(`✅ ${products.length} produtos carregados da planilha!`, 'success');
+                    showNotification(`✅ Cardápio atualizado!`, 'success');
                     
                 } else {
-                    throw new Error('Formato de resposta não reconhecido - esperado: {"produtos": [...]}');
+                    throw new Error('Formato de resposta não reconhecido');
                 }
                 
             } catch (error) {
                 console.error('❌ Erro ao carregar produtos:', error);
                 elements.apiStatus.innerHTML = `<span style="color: #CD212A;"><i class="fas fa-exclamation-circle"></i> Erro: ${error.message}</span>`;
                 
-                setTimeout(() => {
-                    loadSampleProducts();
-                }, 2000);
+                const cachedProducts = getFromCache();
+                if (cachedProducts && cachedProducts.length > 0) {
+                    console.log('🔄 Usando cache antigo como fallback');
+                    products = cachedProducts;
+                    renderProducts();
+                    hideDemoMode();
+                    elements.apiStatus.innerHTML = `<span style="color: #ff9800;">
+                        <i class="fas fa-exclamation-triangle"></i> ${products.length} produtos carregados. (API offline)
+                    </span>`;
+                    showNotification('⚠️ Modo offline - usando cache', 'warning');
+                } else {
+                    setTimeout(() => {
+                        loadSampleProducts();
+                    }, 2000);
+                }
+            } finally {
+                elements.loadingMessage.style.display = 'none';
+            }
+        }
+
+        async function fetchUpdatesInBackground() {
+            try {
+                const apiUrl = `${CONFIG.API_URL}?action=getProducts&t=${Date.now()}`;
+                const response = await fetch(apiUrl);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data?.produtos) {
+                        saveToCache(data.produtos);
+                        console.log('🔁 Cache atualizado em segundo plano');
+                    }
+                }
+            } catch (error) {
+                console.log('🔁 Falha na atualização em segundo plano');
             }
         }
 
@@ -780,6 +893,21 @@
             setTimeout(() => notification.classList.remove('show'), 3000);
         }
 
+        // Funções para desenvolvimento (debug)
+        function clearCache() {
+            localStorage.removeItem(CACHE_CONFIG.CACHE_KEY);
+            localStorage.removeItem(CACHE_CONFIG.TIMESTAMP_KEY);
+            localStorage.removeItem(CACHE_CONFIG.VERSION_KEY);
+            console.log('🗑️ Cache limpo');
+            showNotification('Cache limpo', 'info');
+        }
+
+        function forceUpdate() {
+            clearCache();
+            loadProducts();
+            showNotification('🔄 Forçando atualização...', 'info');
+        }
+
         function init() {
             elements.cartIcon.addEventListener('click', showCartModal);
             elements.closeCart.addEventListener('click', closeCartModal);
@@ -790,6 +918,12 @@
             
             [elements.customerName, elements.customerPhone, elements.customerAddress]
                 .forEach(input => input.addEventListener('input', checkCheckoutAvailability));
+            
+            // Para desenvolvimento - funções de debug
+            window.forceUpdate = forceUpdate;
+            window.clearCache = clearCache;
+            
+            console.log('🕒 Sistema de cache:', CACHE_CONFIG);
             
             loadCustomerData();
             loadProducts();
