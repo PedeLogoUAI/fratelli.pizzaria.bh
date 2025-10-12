@@ -336,7 +336,6 @@
     <main>
         <section class="hero">
             <div class="container hero-content">
-                <!-- REMOVIDO: <h1>Pizzaria Fratelli</h1> -->
                 <div class="description">Aprecie nossos sabores.</div>
                 <p>Descubra a pizza Napolitana. Nossa massa de longa fermentação. Queijos de fabricação própria e produtos de qualidade.</p>
                 <div id="api-status" style="margin-top: 10px; font-size: 0.9rem;"></div>
@@ -350,7 +349,7 @@
 
             <div class="products-grid" id="products-grid">
                 <div class="loading" id="loading-message">
-                    <i class="fas fa-spinner fa-spin"></i> Carregando cardápio...
+                    <i class="fas fa-spinner fa-spin"></i> Lendo banco de dados...
                 </div>
             </div>
         </section>
@@ -543,7 +542,7 @@
             
             try {
                 console.log('🔍 Buscando dados da API...');
-                elements.apiStatus.innerHTML = '<span style="color: #008C45;"><i class="fas fa-sync fa-spin"></i> Atualizando...</span>';
+                elements.apiStatus.innerHTML = '<span style="color: #008C45;"><i class="fas fa-sync fa-spin"></i> Lendo banco de dados...</span>';
                 
                 const apiUrl = `${CONFIG.API_URL}?action=getProducts&t=${Date.now()}`;
                 const response = await fetch(apiUrl);
@@ -632,6 +631,14 @@
                     descricao: 'Coca-Cola, Guaraná ou Fanta',
                     valor: 12.00,
                     imagem: CONFIG.DRINK_IMAGE
+                },
+                {
+                    id: 3,
+                    categoria: 'sobremesa',
+                    produto: 'Tiramisu (EXEMPLO)',
+                    descricao: 'Sobremesa italiana tradicional',
+                    valor: 18.00,
+                    imagem: CONFIG.PIZZA_IMAGE
                 }
             ];
             
@@ -649,24 +656,34 @@
         }
 
         function renderCategories() {
-            const categories = ['todos', ...new Set(products.map(p => p.categoria))];
+            // CORREÇÃO: Garantir que as categorias sejam renderizadas corretamente
+            const categories = ['todos'];
+            products.forEach(product => {
+                if (product.categoria && !categories.includes(product.categoria)) {
+                    categories.push(product.categoria);
+                }
+            });
+            
             elements.categoryFilters.innerHTML = categories.map(cat => `
                 <button class="category-btn ${cat === currentCategory ? 'active' : ''}" data-category="${cat}">
-                    ${cat === 'todos' ? 'Todos' : cat}
+                    ${cat === 'todos' ? 'Todos' : cat.charAt(0).toUpperCase() + cat.slice(1)}
                 </button>
             `).join('');
             
+            // Re-aplicar os event listeners
             document.querySelectorAll('.category-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     currentCategory = btn.dataset.category;
-                    renderCategories();
-                    renderProducts();
+                    renderCategories(); // Re-renderiza os botões com classe active
+                    renderProducts();   // Filtra os produtos
                 });
             });
         }
 
         function renderProducts() {
-            const filtered = currentCategory === 'todos' ? products : products.filter(p => p.categoria === currentCategory);
+            const filtered = currentCategory === 'todos' 
+                ? products 
+                : products.filter(p => p.categoria === currentCategory);
             
             if (filtered.length === 0) {
                 elements.productsGrid.innerHTML = '<div class="error-message">Nenhum produto encontrado</div>';
@@ -699,7 +716,9 @@
 
         function getDefaultImage(category) {
             const categoryLower = category.toLowerCase();
-            return categoryLower.includes('bebida') ? CONFIG.DRINK_IMAGE : CONFIG.PIZZA_IMAGE;
+            if (categoryLower.includes('bebida')) return CONFIG.DRINK_IMAGE;
+            if (categoryLower.includes('sobremesa')) return CONFIG.PIZZA_IMAGE;
+            return CONFIG.PIZZA_IMAGE;
         }
 
         function addToCart(productId) {
