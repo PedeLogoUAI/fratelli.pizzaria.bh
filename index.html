@@ -256,7 +256,10 @@
         .form-group label { display: block; margin-bottom: 5px; font-weight: 500; }
         .form-group input { width: 100%; padding: 8px 10px; border: 1px solid #ddd; border-radius: 4px; }
 
-        .cart-summary { border-top: 1px solid #eee; padding-top: 15px; }
+        .cart-summary {
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
         .summary-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
         .summary-total { font-weight: bold; font-size: 1.2rem; border-top: 1px solid #eee; padding-top: 10px; margin-top: 10px; }
 
@@ -529,7 +532,7 @@
                 if (cachedProducts && cachedProducts.length > 0) {
                     products = cachedProducts;
                     renderProducts();
-                    renderCategories(); // ⬅️ CORREÇÃO: Chamar renderCategories aqui também
+                    renderCategories();
                     hideDemoMode();
                     elements.loadingMessage.style.display = 'none';
                     elements.apiStatus.innerHTML = `<span style="color: #008C45;">
@@ -552,18 +555,20 @@
                 
                 const data = await response.json();
                 
+                // CORREÇÃO: Usar estrutura exata da planilha
                 if (data && data.produtos && Array.isArray(data.produtos)) {
                     products = data.produtos;
                     saveToCache(products);
                     
                     console.log(`🎉 ${products.length} produtos atualizados!`);
+                    console.log('📊 Estrutura dos produtos:', products[0]);
                     elements.apiStatus.innerHTML = `<span style="color: #008C45;">
                         <i class="fas fa-check"></i> ${products.length} produtos carregados.
                     </span>`;
                     
                     hideDemoMode();
                     renderProducts();
-                    renderCategories(); // ⬅️ CORREÇÃO: Chamar renderCategories aqui
+                    renderCategories();
                     showNotification(`✅ Cardápio atualizado!`, 'success');
                     
                 } else {
@@ -579,7 +584,7 @@
                     console.log('🔄 Usando cache antigo como fallback');
                     products = cachedProducts;
                     renderProducts();
-                    renderCategories(); // ⬅️ CORREÇÃO: Chamar renderCategories aqui
+                    renderCategories();
                     hideDemoMode();
                     elements.apiStatus.innerHTML = `<span style="color: #ff9800;">
                         <i class="fas fa-exclamation-triangle"></i> ${products.length} produtos carregados. (API offline)
@@ -618,6 +623,7 @@
             showDemoMode();
             elements.apiStatus.innerHTML = '<span style="color: #ff9800;"><i class="fas fa-info-circle"></i> Modo demonstração - Dados de exemplo</span>';
             
+            // CORREÇÃO: Usar estrutura exata da planilha
             products = [
                 {
                     id: 1,
@@ -625,6 +631,7 @@
                     produto: 'Pizza Margherita (EXEMPLO)',
                     descricao: 'Molho de tomate, mussarela, manjericão fresco',
                     valor: 45.00,
+                    custo: 27.00,
                     imagem: CONFIG.PIZZA_IMAGE
                 },
                 {
@@ -633,6 +640,7 @@
                     produto: 'Refrigerante 2L (EXEMPLO)',
                     descricao: 'Coca-Cola, Guaraná ou Fanta',
                     valor: 12.00,
+                    custo: 7.20,
                     imagem: CONFIG.DRINK_IMAGE
                 },
                 {
@@ -641,6 +649,7 @@
                     produto: 'Tiramisu (EXEMPLO)',
                     descricao: 'Sobremesa italiana tradicional',
                     valor: 18.00,
+                    custo: 10.80,
                     imagem: CONFIG.PIZZA_IMAGE
                 }
             ];
@@ -661,35 +670,30 @@
         function renderCategories() {
             console.log('📂 Renderizando categorias...', products);
             
-            // CORREÇÃO: Usar Set para categorias únicas
             const categoriesSet = new Set();
-            categoriesSet.add('todos'); // Sempre incluir "todos"
+            categoriesSet.add('todos');
             
-            // Coletar categorias dos produtos
             products.forEach(product => {
                 if (product.categoria && product.categoria.trim() !== '') {
                     categoriesSet.add(product.categoria);
                 }
             });
             
-            // Converter Set para Array
             const categories = Array.from(categoriesSet);
             console.log('📋 Categorias encontradas:', categories);
             
-            // Renderizar botões de categoria
             elements.categoryFilters.innerHTML = categories.map(cat => `
                 <button class="category-btn ${cat === currentCategory ? 'active' : ''}" data-category="${cat}">
                     ${cat === 'todos' ? 'Todos' : cat.charAt(0).toUpperCase() + cat.slice(1)}
                 </button>
             `).join('');
             
-            // Re-aplicar os event listeners CORRETAMENTE
             document.querySelectorAll('.category-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     currentCategory = this.dataset.category;
                     console.log('🎯 Categoria selecionada:', currentCategory);
-                    renderCategories(); // Re-renderiza os botões com classe active
-                    renderProducts();   // Filtra os produtos
+                    renderCategories();
+                    renderProducts();
                 });
             });
         }
@@ -708,6 +712,7 @@
                 return;
             }
             
+            // CORREÇÃO: Usar nomes exatos das colunas da planilha
             elements.productsGrid.innerHTML = filtered.map(product => `
                 <div class="product-card">
                     ${isDemoMode ? 
@@ -740,6 +745,7 @@
         }
 
         function addToCart(productId) {
+            // CORREÇÃO: Usar nomes exatos das colunas da planilha
             const product = products.find(p => p.id == productId);
             if (!product) return;
             
@@ -750,13 +756,13 @@
             } else {
                 cart.push({
                     id: product.id,
-                    nome: product.produto,
-                    preco: parseFloat(product.valor),
-                    preco_custo: product.custo || product.valor * 0.6,
+                    nome: product.produto,           // Nome exato da coluna
+                    preco: parseFloat(product.valor), // Nome exato da coluna
+                    preco_custo: product.custo || product.valor * 0.6, // Nome exato da coluna
                     quantidade: 1,
                     sub_total: parseFloat(product.valor),
-                    categoria: product.categoria,
-                    imagem: product.imagem
+                    categoria: product.categoria,     // Nome exato da coluna
+                    imagem: product.imagem           // Nome exato da coluna
                 });
             }
             
@@ -847,6 +853,7 @@
                 
                 showNotification('Enviando pedido...', 'info');
                 
+                // CORREÇÃO: Usar estrutura exata para a API
                 const orderData = {
                     action: 'createOrder',
                     customer: {
@@ -856,14 +863,16 @@
                     },
                     items: cart.map(item => ({
                         numero_pedido: 'PED' + Date.now(),
-                        nome_produto: item.nome,
+                        nome_produto: item.nome,           // Nome exato
                         quantidade: item.quantidade,
-                        valor: item.preco,
+                        valor: item.preco,                 // Nome exato
                         sub_total: item.sub_total,
-                        preco_custo: item.preco_custo
+                        preco_custo: item.preco_custo      // Nome exato
                     })),
                     total: parseFloat(elements.total.textContent.replace('R$ ', ''))
                 };
+                
+                console.log('📤 Enviando pedido para API:', orderData);
                 
                 const response = await fetch(CONFIG.API_URL, {
                     method: 'POST',
