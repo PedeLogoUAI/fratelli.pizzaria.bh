@@ -1793,7 +1793,7 @@
     <script>
         // CONFIGURAÇÃO
         const CONFIG = {
-            API_URL: "https://script.google.com/macros/s/AKfycbz52-viKh6hL_1NgVSTznbQNoaPmXZcVK1TkUJLTgqtzhVkd2inD6IYy6kjf4VXiDXG/exec",
+            API_URL: "https://script.google.com/macros/s/AKfycbzo7HvLfL3n6pYpUf1liFy5cK_kBXvNkekH45GR1jieFEY7QkYMELv5ArfCPeyVwENJ/exec",
             DELIVERY_FEE: 5.00,
             MAX_ORDERS: 5,
             
@@ -2643,6 +2643,26 @@
             }
         }
 
+        // FUNÇÃO ATUALIZADA: getOrderItems() - AGORA INCLUI ID DO PRODUTO
+        function getOrderItems() {
+            const items = [];
+            for (const productId in cart) {
+                const product = allProducts.find(p => p.id === productId);
+                const quantity = cart[productId];
+                if (product && quantity > 0) {
+                    items.push({
+                        Id: product.id, // ✅ AGORA INCLUI O ID DO PRODUTO
+                        Produto: product.produto,
+                        Quantidade: quantity,
+                        Valor: parseFloat(product.valor.toFixed(2)),
+                        SubTotalItem: parseFloat((quantity * product.valor).toFixed(2)),
+                        CustoItem: parseFloat(product.custo.toFixed(2))
+                    });
+                }
+            }
+            return items;
+        }
+
         async function finalizeOrder() {
             if (!validateCustomerData()) {
                 showNotification('Preencha todos os dados obrigatórios!', 'error');
@@ -2678,12 +2698,10 @@
                     status: 'pending'
                 };
                 
-                console.log('📤 Enviando dados para API e salvando no histórico...');
+                console.log('📤 Enviando dados para API...');
                 
-                saveOrderToHistory(orderData);
-                
+                // DADOS PARA A API NO FORMATO CORRETO
                 const apiOrderData = {
-                    BlankLineInstruction: "\n",
                     Telefone: elements.customerPhone.value,
                     Nome: elements.customerName.value,
                     Endereco: getFullAddress(),
@@ -2696,6 +2714,8 @@
                     CustoTotal: parseFloat(costTotal.toFixed(2)),
                     itens: orderData.items
                 };
+                
+                console.log('📦 Dados enviados para API:', apiOrderData);
                 
                 const response = await fetch(CONFIG.API_URL, {
                     method: 'POST',
@@ -2714,6 +2734,9 @@
                 
                 if (result.success) {
                     showNotification('Pedido realizado com sucesso!', 'success');
+                    
+                    // Salva no histórico local
+                    saveOrderToHistory(orderData);
                     
                     showOrderConfirmation(orderData);
                     
@@ -2772,24 +2795,6 @@
             const total = subtotal - discount + currentDeliveryFee;
 
             return { subtotal, discount, total, costTotal };
-        }
-
-        function getOrderItems() {
-            const items = [];
-            for (const productId in cart) {
-                const product = allProducts.find(p => p.id === productId);
-                const quantity = cart[productId];
-                if (product && quantity > 0) {
-                    items.push({
-                        Produto: product.produto,
-                        Quantidade: quantity,
-                        Valor: product.valor,
-                        SubTotalItem: parseFloat((quantity * product.valor).toFixed(2)),
-                        CustoItem: parseFloat((quantity * product.custo).toFixed(2))
-                    });
-                }
-            }
-            return items;
         }
 
         function validateCustomerData() {
